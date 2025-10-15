@@ -1,0 +1,21 @@
+date,material_type,demand,project_id,region,project_type
+2023-01-15,Steel Structures,150,PROJ1001,North,Transmission Line
+2023-02-20,Conductors,35,PROJ1001,North,Transmission Line
+2023-03-10,Transformers,2,PROJ1002,North,Substation
+2023-04-18,Insulators,2500,PROJ1001,North,Transmission Line
+2023-05-25,Steel Structures,200,PROJ1003,West,Transmission Line
+2023-06-22,Cables,15,PROJ1006,Central,Transmission Line
+2023-07-30,Switchgear,10,PROJ1002,North,Substation
+2023-08-15,Steel Structures,180,PROJ1005,East,Augmentation
+2023-09-21,Conductors,40,PROJ1003,West,Transmission Line
+2023-10-19,Insulators,3000,PROJ1006,Central,Transmission Line
+2023-11-28,Transformers,1,PROJ1005,East,Augmentation
+2023-12-15,Steel Structures,120,PROJ1010,South,Substation
+2024-01-20,Cables,25,PROJ1008,West,Augmentation
+2024-02-18,Conductors,50,PROJ1001,North,Transmission Line
+2024-03-25,Insulators,4000,PROJ1003,West,Transmission Line
+2024-04-15,Transformers,3,PROJ1010,South,Substation
+2024-05-22,Steel Structures,250,PROJ1005,East,Augmentation
+2024-06-19,Switchgear,8,PROJ1009,East,Substation
+2024-07-28,Conductors,20,PROJ1008,West,Augmentation
+2024-08-15,Insulators,1500,PROJ1010,South,Substation

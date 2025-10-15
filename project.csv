@@ -1,0 +1,11 @@
+project_id,project_name,status,start_date,end_date,region,project_type,budget
+PROJ1001,765kV North-East Corridor Expansion,In Progress,2023-02-15,2025-08-20,North,Transmission Line,750000000
+PROJ1002,400kV Varanasi Substation Augmentation,Completed,2022-09-01,2024-03-10,North,Substation,320000000
+PROJ1003,Western Grid High-Capacity Line,In Progress,2023-05-20,2026-01-30,West,Transmission Line,980000000
+PROJ1004,Chennai Metro Power Supply Upgrade,Planning,2024-11-10,2027-05-15,South,Substation,450000000
+PROJ1005,Eastern Grid Reliability Project,In Progress,2023-08-01,2025-11-25,East,Augmentation,610000000
+PROJ1006,Central India 220kV Feeder Line,Completed,2022-04-12,2023-12-28,Central,Transmission Line,480000000
+PROJ1007,Himalayan Hydel Power Evacuation,Planning,2025-03-01,2028-09-01,North,Transmission Line,1200000000
+PROJ1008,Mumbai Coastal Power Reinforcement,In Progress,2024-01-20,2026-07-18,West,Augmentation,550000000
+PROJ1009,Kolkata Industrial Zone Substation,Completed,2022-10-05,2024-05-30,East,Substation,290000000
+PROJ1010,Bangalore IT Corridor Power Upgrade,In Progress,2023-11-15,2025-10-22,South,Substation,410000000

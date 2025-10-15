@@ -1,0 +1,11 @@
+material_id,material_name,material_type,current_stock,minimum_stock,maximum_stock,unit_price,supplier
+MAT-ELEC-001,ACSR Zebra Conductor,Conductors,150,50,500,1200,Gupta Cables
+MAT-ELEC-002,Polymer Insulator 400kV,Insulators,8500,2000,20000,3500,Global Insulators Ltd.
+MAT-STRU-001,Lattice Steel Tower Section A,Steel Structures,450,100,1000,85000,National Steel Corp
+MAT-STRU-002,Lattice Steel Tower Section B,Steel Structures,320,80,800,95000,National Steel Corp
+MAT-TRAN-001,500 MVA Transformer 765kV,Transformers,12,4,20,85000000,Bharat Heavy Electricals
+MAT-TRAN-002,315 MVA Transformer 400kV,Transformers,25,10,40,55000000,Siemens India
+MAT-ELEC-003,Underground XLPE Cable 220kV,Cables,80,20,200,9500,KEI Industries
+MAT-STRU-003,Monopole Steel Structure,Steel Structures,180,50,400,150000,Bajaj Electricals
+MAT-ELEC-004,Circuit Breaker 400kV,Switchgear,60,20,150,450000,ABB India
+MAT-ELEC-005,Ceramic Insulator 220kV,Insulators,12000,3000,25000,2800,Aditya Birla Insulators
