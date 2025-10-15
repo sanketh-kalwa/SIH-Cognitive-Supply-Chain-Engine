@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import io
 import json
-
+import os 
 
 try:
     import xgboost as xgb
@@ -27,7 +27,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
 
 class MockDatabase:
     """A mock database class to simulate data storage using session state."""
@@ -253,31 +252,49 @@ class ProcurementOptimizer:
         results.sort(key=lambda x: x['recommendation_score'], reverse=True)
         return {'optimization_strategies': results, 'recommended_strategy': results[0]['strategy']}
 
-
 def page_dashboard():
     st.title("⚡ Cognitive Supply Chain Engine")
     st.markdown("---")
     dp = st.session_state.data_processor
+    
+    # --- KPIs ---
     col1, col2, col3, col4 = st.columns(4)
     with col1: st.metric("Active Projects", len(dp.get_active_projects()), "2 new")
     with col2: st.metric("Material Categories", dp.get_total_material_types(), "5 new")
     with col3: st.metric("Inventory Value", f"₹{dp.get_inventory_value():,.0f}", "-2.3%")
     with col4: st.metric("Est. Monthly Savings", f"₹{dp.get_procurement_savings():,.0f}", "12.5%")
     st.markdown("---")
-    st.header("🔄 Live Digital Twin - Supply Chain Overview")
-    project_status_data = dp.get_project_status_data()
-    if not project_status_data.empty:
-        fig = px.pie(project_status_data, values='count', names='status', title="Current Project Status")
-        st.plotly_chart(fig, use_container_width=True)
-    else:
-        st.info("No project data available.")
-    
-    st.header("🚨 Current Alerts & AI Recommendations")
-    alerts = dp.get_critical_alerts()
-    if alerts:
-        for alert in alerts: st.error(f"**{alert['material']}**: {alert['message']}")
-    else:
-        st.success("No critical inventory alerts.")
+
+    col_chart, col_alerts = st.columns(2)
+
+    with col_chart:
+        st.header("🔄 Live Digital Twin")
+        project_status_data = dp.get_project_status_data()
+        if not project_status_data.empty:
+            fig = px.pie(project_status_data, values='count', names='status', title="Current Project Status")
+            fig.update_layout(legend_title_text='Status')
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Upload project data to see status overview.")
+
+    with col_alerts:
+        st.header("🚨 Alerts & Recommendations")
+        
+        st.subheader("Critical Alerts")
+        alerts = dp.get_critical_alerts()
+        if alerts:
+            for alert in alerts: 
+                st.error(f"**{alert['material']}**: {alert['message']}", icon="🔥")
+        else:
+            st.success("No critical inventory alerts.", icon="✅")
+        
+        st.subheader("AI Recommendations")
+        recommendations = dp.get_ai_recommendations()
+        if recommendations:
+            for rec in recommendations:
+                st.info(f"**{rec['material']}**: {rec['recommendation']}", icon="💡")
+        else:
+            st.success("No immediate procurement recommendations.", icon="✅")
 
 def page_data_upload():
     st.title("📤 Data Upload & Management")
@@ -340,9 +357,42 @@ def page_demand_forecasting():
             for material, data in st.session_state.forecasts.items():
                 st.subheader(f"Forecast for {material}")
                 fig = go.Figure()
-                fig.add_trace(go.Scatter(x=data['dates'], y=data['predictions'], mode='lines', name='Forecast'))
-                fig.add_trace(go.Scatter(x=data['dates'], y=data['confidence_upper'], fill=None, mode='lines', line_color='lightgrey', name='Upper Bound'))
-                fig.add_trace(go.Scatter(x=data['dates'], y=data['confidence_lower'], fill='tonexty', mode='lines', line_color='lightgrey', name='Lower Bound'))
+                
+                fig.add_trace(go.Scatter(
+                    x=data['dates'], 
+                    y=data['predictions'], 
+                    mode='lines', 
+                    name='Forecast',
+                    line=dict(color='#1f77b4', width=2) 
+                ))
+                
+                
+                fig.add_trace(go.Scatter(
+                    x=data['dates'], 
+                    y=data['confidence_upper'], 
+                    fill=None, 
+                    mode='lines', 
+                    line=dict(color='#aaddff', width=0.5), 
+                    name='Upper Bound'
+                ))
+                
+               
+                fig.add_trace(go.Scatter(
+                    x=data['dates'], 
+                    y=data['confidence_lower'], 
+                    fill='tonexty', 
+                    mode='lines', 
+                    line=dict(color='#aaddff', width=0.5), 
+                    fillcolor='rgba(173, 216, 230, 0.4)',
+                    name='Lower Bound'
+                ))
+                
+                fig.update_layout(
+                    title=f"Demand Forecast for {material}",
+                    xaxis_title="Date",
+                    yaxis_title="Demand"
+                )
+                
                 st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Train the model using the sidebar button to generate forecasts.")
@@ -394,7 +444,7 @@ def page_procurement_optimization():
         
         df = pd.DataFrame(result['optimization_strategies'])
         st.dataframe(df.style.format({
-            'total_cost': '{:,.0f}', 'savings': '{:,.0f}', 'price_per_unit': '{:,.2f}'
+            'total_cost': '{:,.0f}', 'savings': '{:,.0f}', 'procurement_date': '{:%Y-%m-%d}'
         }))
         
         fig = px.bar(df, x='strategy', y='total_cost', color='risk_level', title="Strategy Cost vs. Risk")
@@ -458,13 +508,13 @@ def page_logistics_optimization():
         st.success("Route optimized.")
 
 
-
 def main():
     """Main function to run the Streamlit app."""
-
+    
+    # Robust Initialization Block
     if 'initialized' not in st.session_state:
         with st.spinner("Initializing Cognitive Engine... This may take a moment on first run."):
-
+            
             if 'db_data' not in st.session_state:
                 st.session_state.db_data = {
                     'projects': pd.DataFrame(), 'inventory': pd.DataFrame(),
@@ -474,24 +524,27 @@ def main():
                     'alerts': pd.DataFrame(columns=['id', 'material_name', 'alert_type', 'severity', 'message', 'created_at', 'status']),
                     'trained_models': {}
                 }
-      
+            
             st.session_state.data_processor = DataProcessor()
             st.session_state.forecasting_model = ForecastingModel()
             st.session_state.procurement_optimizer = ProcurementOptimizer()
-           
+            
             dp = st.session_state.data_processor
-            if dp.historical_demand.empty:
-                sample_demand = pd.DataFrame({'date': pd.to_datetime(['2023-01-01']), 'material_type': ['Electrical Cables'], 'demand': [100], 'project_id': ['PROJ_001']})
-                dp.load_historical_demand(sample_demand)
-
+            
+            if os.path.exists('project_data.csv'):
+                dp.load_project_data(pd.read_csv('project_data.csv'))
+            if os.path.exists('inventory_data.csv'):
+                dp.load_inventory_data(pd.read_csv('inventory_data.csv'))
+            if os.path.exists('historical_demand.csv'):
+                dp.load_historical_demand(pd.read_csv('historical_demand.csv'))
+            
+            
             fm = st.session_state.forecasting_model
             if not fm.is_trained and not dp.historical_demand.empty:
                 fm.train_model(dp.historical_demand)
             
             st.session_state.initialized = True
             st.rerun()
-
-
     st.sidebar.title("⚡ Navigation")
     PAGES = {
         "🏠 Dashboard": page_dashboard,
